@@ -43,26 +43,20 @@ This library uses [runtypes](https://github.com/pelotom/runtypes) for compile ti
 *   [OpenAttestationDnsDidRecord](#openattestationdnsdidrecord)
 *   [IDNSRecord](#idnsrecord)
 *   [IDNSQueryResponse](#idnsqueryresponse)
-*   [CustomDns](#customdns)
-*   [IDNSQueryResponseTransformer](#idnsqueryresponsetransformer)
-*   [CustomDnsConfig](#customdnsconfig)
-*   [parseCustomDns](#parsecustomdns)
-    *   [Parameters](#parameters)
-*   [queryCustomDns](#querycustomdns)
-    *   [Parameters](#parameters-1)
+*   [CustomDnsResolver](#customdnsresolver)
 *   [queryDns](#querydns)
-    *   [Parameters](#parameters-2)
+    *   [Parameters](#parameters)
 *   [parseOpenAttestationRecord](#parseopenattestationrecord)
-    *   [Parameters](#parameters-3)
+    *   [Parameters](#parameters-1)
 *   [parseDocumentStoreResults](#parsedocumentstoreresults)
-    *   [Parameters](#parameters-4)
+    *   [Parameters](#parameters-2)
 *   [parseDnsDidResults](#parsednsdidresults)
-    *   [Parameters](#parameters-5)
+    *   [Parameters](#parameters-3)
 *   [getDocumentStoreRecords](#getdocumentstorerecords)
-    *   [Parameters](#parameters-6)
+    *   [Parameters](#parameters-4)
     *   [Examples](#examples)
 *   [getDnsDidRecords](#getdnsdidrecords)
-    *   [Parameters](#parameters-7)
+    *   [Parameters](#parameters-5)
 
 ### OpenAttestationDNSTextRecord
 
@@ -72,37 +66,16 @@ This library uses [runtypes](https://github.com/pelotom/runtypes) for compile ti
 
 ### IDNSQueryResponse
 
-### CustomDns
+### CustomDnsResolver
 
-### IDNSQueryResponseTransformer
-
-Type: function (idnsQueryResponseDataArray: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<Record\<any, any>>): [IDNSQueryResponse](#idnsqueryresponse)
-
-### CustomDnsConfig
-
-### parseCustomDns
-
-#### Parameters
-
-*   `customDns` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[CustomDns](#customdns)>** 
-
-Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<AxiosRequestConfig>** 
-
-### queryCustomDns
-
-#### Parameters
-
-*   `customDns` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[CustomDns](#customdns)>** 
-*   `idnsQueryResponseTransformer` **[IDNSQueryResponseTransformer](#idnsqueryresponsetransformer)** 
-
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[IDNSQueryResponse](#idnsqueryresponse)>** 
+Type: function (domain: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)): [Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[IDNSQueryResponse](#idnsqueryresponse)>
 
 ### queryDns
 
 #### Parameters
 
 *   `domain` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
-*   `customDnsConfig` **[CustomDnsConfig](#customdnsconfig)?** 
+*   `customDnsResolvers` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[CustomDnsResolver](#customdnsresolver)>** 
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[IDNSQueryResponse](#idnsqueryresponse)>** 
 
@@ -143,7 +116,7 @@ Queries a given domain and parses the results to retrieve openattestation docume
 #### Parameters
 
 *   `domain` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** e.g: "example.openattestation.com"
-*   `customDnsConfig` **[CustomDnsConfig](#customdnsconfig)?** 
+*   `customDnsResolvers` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[CustomDnsResolver](#customdnsresolver)>?** 
 
 #### Examples
 
@@ -163,7 +136,7 @@ Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 #### Parameters
 
 *   `domain` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
-*   `customDnsConfig` **[CustomDnsConfig](#customdnsconfig)?** 
+*   `customDnsResolvers` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[CustomDnsResolver](#customdnsresolver)>?** 
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[OpenAttestationDnsDidRecord](#openattestationdnsdidrecord)>>** 
 
