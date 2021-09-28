@@ -166,10 +166,12 @@ describe("parseDocumentStoreResults", () => {
 
 describe("parseCustomDns", () => {
   test("should return a valid GET request config", () => {
-    const sampleRequestConfig = {
-      method: "GET",
-      url: "https://1.1.1.1/dns-query?name=google.com&type=TXT",
-    };
+    const sampleRequestConfig = [
+      {
+        method: "GET",
+        url: "https://1.1.1.1/dns-query?name=google.com&type=TXT",
+      },
+    ];
 
     const url = "https://1.1.1.1/dns-query";
     const method = "GET";
@@ -178,24 +180,28 @@ describe("parseCustomDns", () => {
       type: "TXT",
     };
 
-    const config = parseCustomDns({
-      url,
-      method,
-      params,
-    });
+    const config = parseCustomDns([
+      {
+        url,
+        method,
+        params,
+      },
+    ]);
 
     expect(sampleRequestConfig).toStrictEqual(config);
   });
 
   test("should return a valid POST request config", () => {
-    const sampleRequestConfig = {
-      method: "POST",
-      url: "https://1.1.1.1/dns-query?name=google.com&type=TXT",
-      headers: { accept: "application/dns-json" },
-      data: {
-        apiKey: "1234567890",
+    const sampleRequestConfig = [
+      {
+        method: "POST",
+        url: "https://1.1.1.1/dns-query?name=google.com&type=TXT",
+        headers: { accept: "application/dns-json" },
+        data: {
+          apiKey: "1234567890",
+        },
       },
-    };
+    ];
     const url = "https://1.1.1.1/dns-query";
     const method = "POST";
     const params = {
@@ -207,13 +213,15 @@ describe("parseCustomDns", () => {
     };
     const headers = { accept: "application/dns-json" };
 
-    const config = parseCustomDns({
-      url,
-      method,
-      params,
-      body,
-      headers,
-    });
+    const config = parseCustomDns([
+      {
+        url,
+        method,
+        params,
+        body,
+        headers,
+      },
+    ]);
 
     expect(sampleRequestConfig).toStrictEqual(config);
   });
