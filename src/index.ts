@@ -24,7 +24,7 @@ interface GenericObject {
 
 export type CustomDnsResolver = (domain: string) => Promise<IDNSQueryResponse>;
 
-const defaultDnsResolvers: CustomDnsResolver[] = [
+export const defaultDnsResolvers: CustomDnsResolver[] = [
   async (domain) => {
     const { data } = await axios({
       method: "GET",
@@ -37,9 +37,8 @@ const defaultDnsResolvers: CustomDnsResolver[] = [
     const { data } = await axios({
       method: "GET",
       url: `https://1.1.1.1/dns-query?name=${domain}&type=TXT`,
-      headers: { accept: "application/dns-json" },
+      headers: { accept: "application/dns-json", contentType: "application/json", connection: "keep-alive" },
     });
-
     return data;
   },
 ];
@@ -86,7 +85,7 @@ export const queryDns = async (domain: string, customDnsResolvers: CustomDnsReso
 
   let i = 0;
 
-  while (!data && i < customDnsResolvers.length - 1) {
+  while (!data && i < customDnsResolvers.length) {
     try {
       const customDnsResolver = customDnsResolvers[i];
       // eslint-disable-next-line no-await-in-loop

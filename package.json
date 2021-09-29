@@ -52,6 +52,7 @@
   "dependencies": {
     "axios": "^0.21.1",
     "debug": "^4.3.1",
+    "msw": "0.35.0",
     "runtypes": "^6.3.0"
   },
   "devDependencies": {

@@ -1,4 +1,9 @@
-import { getDocumentStoreRecords, parseDocumentStoreResults, getDnsDidRecords } from ".";
+import axios from "axios";
+
+import { setupServer, SetupServerApi } from "msw/node";
+import { rest } from "msw";
+import { CustomDnsResolver, getDocumentStoreRecords, queryDns, parseDocumentStoreResults, getDnsDidRecords } from ".";
+import { DnsproveStatusCode } from "./common/error";
 
 describe("getCertStoreRecords", () => {
   const sampleDnsTextRecordWithDnssec = {
@@ -161,5 +166,93 @@ describe("parseDocumentStoreResults", () => {
       },
     ];
     expect(parseDocumentStoreResults(sampleRecord, true)).toStrictEqual([]);
+  });
+});
+
+describe("queryDns", () => {
+  let server: SetupServerApi;
+
+  const sampleResponse = {
+    AD: false,
+    Answer: [
+      {
+        name: "google.com",
+        type: 16,
+        TTL: 3529,
+        data: '"docusign=1b0a6754-49b1-4db5-8540-d2c12664b289"',
+      },
+    ],
+  };
+
+  const testDnsResolvers: CustomDnsResolver[] = [
+    async (domain) => {
+      const { data } = await axios({
+        method: "GET",
+        url: `https://dns.google/resolve?name=${domain}&type=TXT`,
+      });
+
+      return data;
+    },
+    async (domain) => {
+      const { data } = await axios({
+        method: "GET",
+        url: `https://1.1.1.1/dns-query?name=${domain}&type=TXT`,
+        headers: { accept: "application/dns-json", contentType: "application/json", connection: "keep-alive" },
+      });
+      return data;
+    },
+  ];
+
+  afterEach(() => {
+    server.close();
+  });
+
+  test("Should work for first dns if first dns is not down", async () => {
+    const handlers = [
+      rest.get("https://dns.google/resolve", (_, res, ctx) => {
+        return res(ctx.json(sampleResponse));
+      }),
+    ];
+
+    server = setupServer(...handlers);
+    server.listen();
+
+    const records = await queryDns("https://google.com", testDnsResolvers);
+    expect(sampleResponse).toStrictEqual(records);
+  });
+
+  test("Should fallback to second dns when first dns is down", async () => {
+    const handlers = [
+      rest.get("https://dns.google/resolve", (_, res, ctx) => {
+        return res(ctx.status(500));
+      }),
+      rest.get("https://1.1.1.1/dns-query", (_, res, ctx) => {
+        return res(ctx.json(sampleResponse));
+      }),
+    ];
+    server = setupServer(...handlers);
+    server.listen();
+
+    const records = await queryDns("https://google.com", testDnsResolvers);
+
+    expect(sampleResponse).toStrictEqual(records);
+  });
+
+  test("Should throw error when all dns provided are down", async () => {
+    const handlers = [
+      rest.get("https://dns.google/resolve", (_, res, ctx) => {
+        return res(ctx.status(500));
+      }),
+      rest.get("https://1.1.1.1/dns-query", (_, res, ctx) => {
+        return res(ctx.status(500));
+      }),
+    ];
+    server = setupServer(...handlers);
+    server.listen();
+    try {
+      await queryDns("https://google.com", testDnsResolvers);
+    } catch (e: any) {
+      expect(e.code).toStrictEqual(DnsproveStatusCode.IDNS_QUERY_ERROR_GENERAL);
+    }
   });
 });

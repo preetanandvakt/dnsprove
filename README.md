@@ -44,6 +44,7 @@ This library uses [runtypes](https://github.com/pelotom/runtypes) for compile ti
 *   [IDNSRecord](#idnsrecord)
 *   [IDNSQueryResponse](#idnsqueryresponse)
 *   [CustomDnsResolver](#customdnsresolver)
+*   [defaultDnsResolvers](#defaultdnsresolvers)
 *   [queryDns](#querydns)
     *   [Parameters](#parameters)
 *   [parseOpenAttestationRecord](#parseopenattestationrecord)
@@ -69,6 +70,10 @@ This library uses [runtypes](https://github.com/pelotom/runtypes) for compile ti
 ### CustomDnsResolver
 
 Type: function (domain: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)): [Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[IDNSQueryResponse](#idnsqueryresponse)>
+
+### defaultDnsResolvers
+
+Type: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[CustomDnsResolver](#customdnsresolver)>
 
 ### queryDns
 
