@@ -17,15 +17,7 @@
           ".tsx"
         ]
       }
-    },
-    "import/no-extraneous-dependencies": [
-      "error",
-      {
-        "devDependencies": [
-          "**/*.test.ts"
-        ]
-      }
-    ]
+    }
   },
   "overrides": [
     {
@@ -47,6 +39,14 @@
         "no-useless-constructor": "off",
         "import/prefer-default-export": "off",
         "@typescript-eslint/no-useless-constructor": "error",
+        "import/no-extraneous-dependencies": [
+          "error",
+          {
+            "devDependencies": [
+              "**/*.test.ts"
+            ]
+          }
+        ],
         "import/extensions": "off",
         "no-redeclare": "off",
         "@typescript-eslint/no-redeclare": [
