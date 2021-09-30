@@ -6,13 +6,13 @@ A valid OpenAttestation DNS-TXT record looks like:
 
 ```js
 [
-      {
-        name: "example.openattestation.com.",
-        type: 16,
-        TTL: 110,
-        data: '"openatts net=ethereum netId=3 addr=0x2f60375e8144e16Adf1979936301D8341D58C36C"'
-      }
-]
+  {
+    name: "example.openattestation.com.",
+    type: 16,
+    TTL: 110,
+    data: '"openatts net=ethereum netId=3 addr=0x2f60375e8144e16Adf1979936301D8341D58C36C"',
+  },
+];
 ```
 
 Validation is run on all retrieved records to ensure they conform to the expected format, and records that fail validation will simply be omitted from the returned results.

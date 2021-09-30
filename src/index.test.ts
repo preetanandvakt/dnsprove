@@ -1,5 +1,4 @@
 import axios from "axios";
-
 import { setupServer, SetupServerApi } from "msw/node";
 import { rest } from "msw";
 import { CustomDnsResolver, getDocumentStoreRecords, queryDns, parseDocumentStoreResults, getDnsDidRecords } from ".";
@@ -196,7 +195,7 @@ describe("queryDns", () => {
     async (domain) => {
       const { data } = await axios({
         method: "GET",
-        url: `https://1.1.1.1/dns-query?name=${domain}&type=TXT`,
+        url: `https://cloudflare-dns.com/dns-query?name=${domain}&type=TXT`,
         headers: { accept: "application/dns-json", contentType: "application/json", connection: "keep-alive" },
       });
       return data;
@@ -226,7 +225,7 @@ describe("queryDns", () => {
       rest.get("https://dns.google/resolve", (_, res, ctx) => {
         return res(ctx.status(500));
       }),
-      rest.get("https://1.1.1.1/dns-query", (_, res, ctx) => {
+      rest.get("https://cloudflare-dns.com/dns-query", (_, res, ctx) => {
         return res(ctx.json(sampleResponse));
       }),
     ];
@@ -243,7 +242,7 @@ describe("queryDns", () => {
       rest.get("https://dns.google/resolve", (_, res, ctx) => {
         return res(ctx.status(500));
       }),
-      rest.get("https://1.1.1.1/dns-query", (_, res, ctx) => {
+      rest.get("https://cloudflare-dns.com/dns-query", (_, res, ctx) => {
         return res(ctx.status(500));
       }),
     ];
