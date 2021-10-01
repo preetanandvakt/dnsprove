@@ -2,6 +2,7 @@ import axios from "axios";
 import { OpenAttestationDNSTextRecord, OpenAttestationDNSTextRecordT } from "./records/dnsTxt";
 import { OpenAttestationDnsDidRecord, OpenAttestationDnsDidRecordT } from "./records/dnsDid";
 import { getLogger } from "./util/logger";
+import { CodedError, DnsproveStatusCode } from "./common/error";
 
 const { trace } = getLogger("index");
 
@@ -20,6 +21,27 @@ export interface IDNSQueryResponse {
 interface GenericObject {
   [key: string]: string;
 }
+
+export type CustomDnsResolver = (domain: string) => Promise<IDNSQueryResponse>;
+
+export const defaultDnsResolvers: CustomDnsResolver[] = [
+  async (domain) => {
+    const { data } = await axios({
+      method: "GET",
+      url: `https://dns.google/resolve?name=${domain}&type=TXT`,
+    });
+
+    return data;
+  },
+  async (domain) => {
+    const { data } = await axios({
+      method: "GET",
+      url: `https://cloudflare-dns.com/dns-query?name=${domain}&type=TXT`,
+      headers: { accept: "application/dns-json", contentType: "application/json", connection: "keep-alive" },
+    });
+    return data;
+  },
+];
 
 /**
  * Returns true for strings that are openattestation records
@@ -58,8 +80,29 @@ const formatDnsDidRecord = ({ a, v, p, type }: { [key: string]: string }) => {
   };
 };
 
-export const queryDns = async (domain: string): Promise<IDNSQueryResponse> => {
-  const { data } = await axios.get<IDNSQueryResponse>(`https://dns.google/resolve?name=${domain}&type=TXT`);
+export const queryDns = async (domain: string, customDnsResolvers: CustomDnsResolver[]): Promise<IDNSQueryResponse> => {
+  let data;
+
+  let i = 0;
+
+  while (!data && i < customDnsResolvers.length) {
+    try {
+      const customDnsResolver = customDnsResolvers[i];
+      // eslint-disable-next-line no-await-in-loop
+      data = await customDnsResolver(domain);
+    } catch (e) {
+      i += 1;
+    }
+  }
+
+  if (!data) {
+    throw new CodedError(
+      "Unable to query DNS",
+      DnsproveStatusCode.IDNS_QUERY_ERROR_GENERAL,
+      "IDNS_QUERY_ERROR_GENERAL"
+    );
+  }
+
   return data;
 };
 
@@ -141,10 +184,15 @@ export const parseDnsDidResults = (recordSet: IDNSRecord[] = [], dnssec: boolean
     addr: '0x2f60375e8144e16Adf1979936301D8341D58C36C',
     dnssec: true } ]
  */
-export const getDocumentStoreRecords = async (domain: string): Promise<OpenAttestationDNSTextRecord[]> => {
+export const getDocumentStoreRecords = async (
+  domain: string,
+  customDnsResolvers?: CustomDnsResolver[]
+): Promise<OpenAttestationDNSTextRecord[]> => {
   trace(`Received request to resolve ${domain}`);
 
-  const results = await queryDns(domain);
+  const dnsResolvers = customDnsResolvers || defaultDnsResolvers;
+
+  const results = await queryDns(domain, dnsResolvers);
   const answers = results.Answer || [];
 
   trace(`Lookup results: ${JSON.stringify(answers)}`);
@@ -152,10 +200,15 @@ export const getDocumentStoreRecords = async (domain: string): Promise<OpenAttes
   return parseDocumentStoreResults(answers, results.AD);
 };
 
-export const getDnsDidRecords = async (domain: string): Promise<OpenAttestationDnsDidRecord[]> => {
+export const getDnsDidRecords = async (
+  domain: string,
+  customDnsResolvers?: CustomDnsResolver[]
+): Promise<OpenAttestationDnsDidRecord[]> => {
   trace(`Received request to resolve ${domain}`);
 
-  const results = await queryDns(domain);
+  const dnsResolvers = customDnsResolvers || defaultDnsResolvers;
+
+  const results = await queryDns(domain, dnsResolvers);
   const answers = results.Answer || [];
 
   trace(`Lookup results: ${JSON.stringify(answers)}`);
