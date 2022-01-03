@@ -12,12 +12,19 @@ export enum EthereumNetworks {
   homestead = "1",
   ropsten = "3",
   rinkeby = "4",
+  goerli = "5",
+  kovan = "42",
+  polygon = "137",
+  polygonMumbai = "80001",
 }
 
 export const EthereumNetworkIdT = Union(
   Literal(EthereumNetworks.homestead),
   Literal(EthereumNetworks.ropsten),
-  Literal(EthereumNetworks.rinkeby)
+  Literal(EthereumNetworks.rinkeby),
+  Literal(EthereumNetworks.goerli),
+  Literal(EthereumNetworks.polygon),
+  Literal(EthereumNetworks.polygonMumbai)
 );
 
 export const OpenAttestationDNSTextRecordT = Record({
