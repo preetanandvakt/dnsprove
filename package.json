@@ -1,11 +1,11 @@
 {
-  "name": "@govtechsg/dnsprove",
+  "name": "@preetanandvakt/dnsprove",
   "version": "0.0.0-development",
   "description": "Helper utility for retrieving OpenAttestations document store address records from DNS",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Open-Attestation/dnsprove.git"
+    "url": "git+ssh://git@github.com:preetanandvakt/dnsprove.git"
   },
   "main": "dist/index.js",
   "author": {
@@ -91,7 +91,8 @@
     "typescript": "^4.2.4"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "registry": "https://npm.pkg.github.com"
   },
   "config": {
     "commitizen": {
