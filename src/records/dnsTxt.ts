@@ -16,6 +16,7 @@ export enum EthereumNetworks {
   kovan = "42",
   polygon = "137",
   polygonMumbai = "80001",
+  vakt = "2018",
 }
 
 export const EthereumNetworkIdT = Union(
@@ -24,7 +25,8 @@ export const EthereumNetworkIdT = Union(
   Literal(EthereumNetworks.rinkeby),
   Literal(EthereumNetworks.goerli),
   Literal(EthereumNetworks.polygon),
-  Literal(EthereumNetworks.polygonMumbai)
+  Literal(EthereumNetworks.polygonMumbai),
+  Literal(EthereumNetworks.vakt)
 );
 
 export const OpenAttestationDNSTextRecordT = Record({
