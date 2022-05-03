@@ -92,6 +92,26 @@ describe("parseDocumentStoreResults", () => {
       },
     ]);
   });
+  test("it should correctly handle cases where the TXT record is vakt provisioned", () => {
+    const sampleRecord = [
+      {
+        name: "openattestation.shared.vtest.info.",
+        type: 16,
+        TTL: 60,
+        data: "openatts net=ethereum netId=2018 addr=0x076875e0220dA4A810DEbb2a1535E863d7A15CF0",
+        dnssec: true,
+      },
+    ];
+    expect(parseDocumentStoreResults(sampleRecord, true)).toStrictEqual([
+      {
+        type: "openatts",
+        net: "ethereum",
+        netId: "2018",
+        addr: "0x076875e0220dA4A810DEbb2a1535E863d7A15CF0",
+        dnssec: true,
+      },
+    ]);
+  });
   test("it should return two record items if there are two openatts record", () => {
     const sampleRecord = [
       {
